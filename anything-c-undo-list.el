@@ -22,8 +22,8 @@
 ;;; Commentary:
 ;;
 ;; Some anything configurations for `buffer-undo-list' and poin-undo.el.
-;; Exposes anything-c-buffer-undo-list-*, anything-c-point-undo-list-* and
-;; acul-* symbols.
+;; Exposes anything-c-buffer-undo-list-*, anything-c-point-undo-list-*,
+;; anything-c-undo-list-* and acul-* symbols.
 
 ;;; Setup:
 ;;
@@ -104,7 +104,7 @@
         ;; POSITION;;
         finally return acc))
 (defun acul-make-linum-of ()
-  "Create memoized/safe version of `linun-number-at-pos'."
+  "Create memoized/safe version of `line-number-at-pos'"
   (acul-memoize (lambda (z) (line-number-at-pos (min z (point-max))))))
 (defun* acul-make-point-line-filter2
     (delta &optional (posy-of 'identity) (posx-of 'identity))
@@ -382,3 +382,4 @@
 ;;                        . ,(acul-make-candidate-transformer 'highlight)))))
 
 (provide 'anything-c-undo-list)
+;;; anything-c-undo-list ends here
