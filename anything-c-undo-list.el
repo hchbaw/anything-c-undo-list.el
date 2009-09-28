@@ -220,7 +220,7 @@
 (defface anything-c-undo-list-highlight-point-overlay-face
   '((t (:inherit anything-selection-face)))
   "Face for point overlay face used by Buffer/Point undo list."
-  :group 'anything)
+  :group 'anything-config)
 (defvar acul-highlight-point-overlay-face 'anything-c-undo-list-highlight-point-overlay-face)
 (defvar acul-highlight-point-overlay nil)
 (defun acul-action-highlight-point (selection)
