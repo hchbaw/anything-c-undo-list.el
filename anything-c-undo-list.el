@@ -185,6 +185,11 @@
                     '((candidates . anything-c-buffer-undo-list-candidates))))
 ;; (let ((anything-after-initialize-hook (lambda () (anything-follow-mode t)))) (anything 'anything-c-source-buffer-undo-list))
 
+(defcustom anything-c-undo-list-highlight-point-face
+  'bold
+  "*Face for point used by Buffer/Point undo list."
+  :type 'face
+  :group 'anything-config)
 (defun acul-propertize (string value line padding point-of)
   (let* ((pt (funcall point-of value))
          (fix-point (if (= (line-end-position) (funcall point-of value))
@@ -192,7 +197,7 @@
                       'identity)))
     (add-text-properties (+ padding (funcall fix-point (current-column)))
                          (1+ (+ padding (funcall fix-point (current-column))))
-                         '(face bold)
+                         `(face ,anything-c-undo-list-highlight-point-face)
                          string)
     (propertize string 'point (funcall fix-point pt))))
 (defun anything-c-buffer-undo-list-candidates+ ()
@@ -217,11 +222,11 @@
          (anything-aif (get-text-property 0 'after-goto (cadr selection))
              (funcall it))))))
 
-(defface anything-c-undo-list-highlight-point-overlay-face
-  '((t (:inherit anything-selection-face)))
-  "Face for point overlay face used by Buffer/Point undo list."
+(defcustom anything-c-undo-list-highlight-point-overlay-face
+  anything-selection-face
+  "*Face for point overlay used by Buffer/Point undo list."
+  :type 'face
   :group 'anything-config)
-(defvar acul-highlight-point-overlay-face 'anything-c-undo-list-highlight-point-overlay-face)
 (defvar acul-highlight-point-overlay nil)
 (defun acul-action-highlight-point (selection)
   (unless acul-highlight-point-overlay
@@ -229,7 +234,7 @@
   (anything-aif (get-text-property 0 'point (cadr selection))
       (move-overlay acul-highlight-point-overlay it (1+ it)))
   (overlay-put acul-highlight-point-overlay
-               'face 'highlight))
+               'face anything-c-undo-list-highlight-point-overlay-face))
 (defun acul-cleanup-highlight-point ()
   (anything-aif acul-highlight-point-overlay (delete-overlay it)))
 
