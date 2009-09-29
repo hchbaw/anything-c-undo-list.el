@@ -298,12 +298,9 @@
       (save-excursion
         (goto-char (car x))
         (string-match (rx (>= 2 space))
-                      (replace-regexp-in-string
-                       (rx (or ?\n (seq ?\C-m ?\n)))
-                       " "
-                       (buffer-substring-no-properties
-                        (max (1- (point)) (point-min))
-                        (min (1+ (point)) (point-max))))))))
+                      (buffer-substring-no-properties
+                       (max (1- (point)) (point-min))
+                       (min (1+ (point)) (point-max)))))))
 (defvar anything-c-source-point-undo-list+
   (acul-source-base "Point undo list"
                     `((candidates . anything-c-point-undo-list-candidates+)
