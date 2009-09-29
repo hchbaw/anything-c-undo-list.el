@@ -183,7 +183,7 @@
 (defvar anything-c-source-buffer-undo-list
   (acul-source-base "Buffer undo list"
                     '((candidates . anything-c-buffer-undo-list-candidates))))
-;; (anything 'anything-c-source-buffer-undo-list)
+;; (let ((anything-after-initialize-hook (lambda () (anything-follow-mode t)))) (anything 'anything-c-source-buffer-undo-list))
 
 (defun acul-propertize (string value line padding point-of)
   (let* ((pt (funcall point-of value))
