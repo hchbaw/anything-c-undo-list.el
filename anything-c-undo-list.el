@@ -323,9 +323,17 @@
 (defun anything-c-undo-list ()
   "Preconfigured `anything' for undo list."
   (interactive)
-  (let ((anything-after-initialize-hook (lambda () (anything-follow-mode t))))
-    (anything-other-buffer anything-c-undo-list-sources
-                           "*anything undo list*")))
+  (macrolet ((with-follow-mode (&rest body)
+               `(letf* ((anything-after-initialize-hook-orig
+                         anything-after-initialize-hook)
+                        (anything-after-initialize-hook
+                         (lambda ()
+                           (run-hooks 'anything-after-initialize-hook-orig)
+                           (anything-follow-mode t))))
+                  (progn ,@body))))
+       (with-follow-mode
+           (anything-other-buffer anything-c-undo-list-sources
+                                  "*anything undo list*"))))
 
 ;; WIP: Hilight at the filtered-candidate-transformer phase.
 ;; TODO: Out-of-sync.
