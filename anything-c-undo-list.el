@@ -292,6 +292,7 @@
                              (set-window-start (get-buffer-window)
                                                (cdr value)))))))))
     (anything-c-point-undo-list-candidates propertize)))
+(require 'rx)
 (defvar anything-c-source-point-undo-list+
   (acul-source-base "Point undo list"
                     `((candidates . anything-c-point-undo-list-candidates+)
@@ -311,11 +312,15 @@
                                            (save-excursion
                                              (goto-char (car x))
                                              (string-match
-                                              "[[:space:]]"
-                                              (buffer-substring-no-properties
-                                               (point) (min
-                                                        (1+ (point))
-                                                        (point-max)))))))))
+                                              (rx (>= 2 space))
+                                              (replace-regexp-in-string
+                                               (rx (or ?\n (seq ?\C-m ?\n)))
+                                               " "
+                                               (buffer-substring-no-properties
+                                                (max (1- (point))
+                                                     (point-min))
+                                                (min (1+ (point))
+                                                     (point-max))))))))))
                                 (if (not (funcall skipp x ys))
                                   (values t (funcall linum (car x)))
                                   (values nil nil))))))
