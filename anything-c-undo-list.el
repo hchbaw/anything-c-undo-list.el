@@ -293,6 +293,17 @@
                                                (cdr value)))))))))
     (anything-c-point-undo-list-candidates propertize)))
 (require 'rx)
+(defun acul-point-undo-list+-skip-p (x ys)
+  (or (find-if (apply-partially '= (car x)) ys :key 'caar)
+      (save-excursion
+        (goto-char (car x))
+        (string-match (rx (>= 2 space))
+                      (replace-regexp-in-string
+                       (rx (or ?\n (seq ?\C-m ?\n)))
+                       " "
+                       (buffer-substring-no-properties
+                        (max (1- (point)) (point-min))
+                        (min (1+ (point)) (point-max))))))))
 (defvar anything-c-source-point-undo-list+
   (acul-source-base "Point undo list"
                     `((candidates . anything-c-point-undo-list-candidates+)
@@ -304,26 +315,9 @@
                       (filter2
                        . ,(lexical-let ((linum (acul-make-linum-of)))
                             (lambda (x ys)
-                              (let ((skipp
-                                     (lambda (x ys)
-                                       (or (find-if
-                                            (apply-partially '= (car x))
-                                            ys :key 'caar)
-                                           (save-excursion
-                                             (goto-char (car x))
-                                             (string-match
-                                              (rx (>= 2 space))
-                                              (replace-regexp-in-string
-                                               (rx (or ?\n (seq ?\C-m ?\n)))
-                                               " "
-                                               (buffer-substring-no-properties
-                                                (max (1- (point))
-                                                     (point-min))
-                                                (min (1+ (point))
-                                                     (point-max))))))))))
-                                (if (not (funcall skipp x ys))
-                                  (values t (funcall linum (car x)))
-                                  (values nil nil))))))
+                              (if (not (acul-point-undo-list+-skip-p x ys))
+                                (values t (funcall linum (car x)))
+                                (values nil nil)))))
                       (action-transformer . acul-action-transformer))))
 ;; (let ((anything-after-initialize-hook (lambda () (anything-follow-mode t)))) (anything 'anything-c-source-point-undo-list+))
 
