@@ -47,6 +47,12 @@
 ;;  `anything-c-buffer-undo-list-collect-limit'
 ;;    *Number of items to be listed by `anything-c-buffer-undo-list'.
 ;;    default = most-positive-fixnum
+;;  `anything-c-undo-list-highlight-point-face'
+;;    *Face for point used by Buffer/Point undo list.
+;;    default = (quote bold)
+;;  `anything-c-undo-list-highlight-point-overlay-face'
+;;    *Face for point overlay used by Buffer/Point undo list.
+;;    default = anything-selection-face
 ;;  `anything-c-point-undo-list-examine-limit'
 ;;    *Number of the `point-undo-list' items to be examined by `anything-c-point-undo-list'.
 ;;    default = anything-c-buffer-undo-list-examine-limit
