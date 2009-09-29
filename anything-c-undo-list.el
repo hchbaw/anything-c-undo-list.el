@@ -320,7 +320,8 @@
 
 (defvar anything-c-undo-list-sources
   '(anything-c-source-buffer-undo-list+
-    anything-c-source-point-undo-list+))
+    anything-c-source-point-undo-list+
+    anything-c-source-window-buffer))
 (defun anything-c-undo-list ()
   "Preconfigured `anything' for undo list."
   (interactive)
@@ -335,6 +336,43 @@
        (with-follow-mode
            (anything-other-buffer anything-c-undo-list-sources
                                   "*anything undo list*"))))
+
+(defun anything-c-window-buffer-candidates (extras)
+  (labels ((hunkn (initial-window-line forward-n forward-times)
+             (save-excursion
+               (move-to-window-line initial-window-line)
+               (dotimes (_ forward-times)
+                 (forward-line forward-n))
+               (point)))
+           (bounds (n)
+             (values (hunkn 0 -1 n)
+                     (hunkn -1 1 n))))
+    (with-current-buffer anything-current-buffer
+      (with-selected-window (get-buffer-window (current-buffer))
+        (save-excursion
+          (save-restriction
+            (multiple-value-bind (top bottom) (bounds extras)
+              (let ((linum (line-number-at-pos top)))
+                (narrow-to-region top bottom)
+                (loop until (= (point) (point-max))
+                      initially (goto-char (point-min))
+                      collect (let ((s (format "%5d:%s"
+                                               linum
+                                               (buffer-substring
+                                                (line-beginning-position)
+                                                (line-end-position)))))
+                                (propertize s
+                                            'after-goto
+                                            (apply-partially
+                                             'beginning-of-line-text)))
+                      do (forward-line) (incf linum))))))))))
+(defvar anything-c-source-window-buffer
+  (acul-source-base "Window buffer"
+                    `((candidates
+                       . ,(apply-partially
+                           'anything-c-window-buffer-candidates 35))
+                      (action-transformer . acul-action-transformer))))
+;; (let ((anything-after-initialize-hook (lambda () (anything-follow-mode t)))) (anything 'anything-c-source-window-buffer))
 
 ;; WIP: Hilight at the filtered-candidate-transformer phase.
 ;; TODO: Out-of-sync.
